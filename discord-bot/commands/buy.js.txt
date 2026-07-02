@@ -1,0 +1,50 @@
+const { loadDB, saveDB } = require("../utils/db");
+
+module.exports = {
+  name: "buy",
+
+  execute(message, args) {
+    const db = loadDB();
+    const id = message.author.id;
+
+    if (!db[id]) db[id] = { coins: 0, diamonds: 0, tickets: 0 };
+
+    const item = args[0];
+
+    // 🎟️ ticket
+    if (item === "ticket") {
+      if (db[id].coins < 200) return message.reply("❌ Vajag 200 coins");
+      db[id].coins -= 200;
+      db[id].tickets += 1;
+      saveDB(db);
+      return message.reply("🎟️ Nopirki biļeti!");
+    }
+
+    // 🎡 spin
+    if (item === "spin") {
+      if (db[id].coins < 1000) return message.reply("❌ Vajag 1000 coins");
+      db[id].coins -= 1000;
+      saveDB(db);
+      return message.reply("🎡 +1 extra spin!");
+    }
+
+    // 👑 VIP dimanti
+    if (item === "vip") {
+      if (db[id].diamonds < 20) return message.reply("❌ Vajag 20 dimantus");
+      db[id].diamonds -= 20;
+      saveDB(db);
+      return message.reply("👑 VIP nopirkts (7 dienas ideju vari pieslēgt vēlāk)");
+    }
+
+    // 💰 coins pack
+    if (item === "coins") {
+      if (db[id].diamonds < 10) return message.reply("❌ Vajag 10 dimantus");
+      db[id].diamonds -= 10;
+      db[id].coins += 1000;
+      saveDB(db);
+      return message.reply("💰 +1000 coins!");
+    }
+
+    message.reply("❌ Nezināms item. Skaties !shop");
+  }
+};

@@ -1,0 +1,18 @@
+const { loadDB } = require("../utils/db");
+
+module.exports = {
+  name: "balance",
+
+  execute(message) {
+    const db = loadDB();
+    const id = message.author.id;
+
+    if (!db[id]) db[id] = { coins: 0, diamonds: 0, tickets: 0 };
+
+    message.reply(
+      `💰 Coins: ${db[id].coins}
+💎 Dimanti: ${db[id].diamonds}
+🎟️ Biļetes: ${db[id].tickets || 0}`
+    );
+  }
+};
